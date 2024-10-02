@@ -4,11 +4,13 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; // ERC20代币接口
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"; // 可销毁的ERC20代币扩展
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol"; // 基础的ERC20代币实现
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol"; // 防重入攻击保护
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol"; // 防重入攻击保护
 import "@openzeppelin/contracts/access/Ownable.sol"; // 合约所有权管理
 
+//import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol"
+
 // 继承自ReentrancyGuard和Ownable
-contract StakingRewards is ReentrancyGuard, Ownable {
+contract StakingRewards is ReentrancyGuard, Ownable,ERC20Burnable {
     IERC20 public rntToken; // RNT代币接口
     ERC20Burnable public esRntToken;  // 可销毁的esRNT代币接口
 
@@ -31,9 +33,10 @@ contract StakingRewards is ReentrancyGuard, Ownable {
     event RewardClaimed(address indexed user, uint256 amount); // 领取奖励事件
 
     // 构造函数，初始化RNT代币和esRNT代币
-    constructor(address _rntToken) {
+    constructor(address _rntToken) Ownable(msg.sender) {
         rntToken = IERC20(_rntToken);
-        esRntToken = new ERC20Burnable("esRNT", "esRNT");
+//        esRntToken = new ERC20Burnable();
+        esRntToken=(_rntToken);
     }
 
     // 质押函数，用户质押RNT代币
